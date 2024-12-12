@@ -1,0 +1,781 @@
+# MrFrips's Quality Of Life Additions
+# Required Plugins | Skript, skQuery, TuSKe
+# Recommended Plugins | Vault, Any Permissions Plugin
+
+# Recommended Minecraft Version: 1.19.4
+# Thanks for installing :)
+ 
+#===================================#
+#		Created by: MrFrips			#
+#		Version:	v.1.2.7			#
+#		Skript: NQOL				#
+#===================================#
+
+options:
+
+	filename: NQOL
+	version: v.&b1.2.7
+	nqprefix: &b&l NQ&7
+	date: &b%date(2024, 04, 04, 04, 00)%
+	#nopermmsg: "{@nqprefix} &7У вас нет разрешения на выполнение этой команды!"
+
+on load:
+	#{nqolprefix} is not set:
+		#set {nqolprefix} to "&b&lNQ&7"
+	{nopermmsg} is not set:
+		set {nopermmsg} to "%{nqolprefix}% &7У вас нет разрешения на выполнение этой команды!"
+
+on join:
+		set join message to "&a[+]&r &b%player%"
+    # "&8[&2+&8] &7Игрок &2%player% &7решил почтить своим присутствием &6&l(С наступающим)!"
+on quit:
+		set quit message to "&c[-]&r &3%player%"
+
+on tab complete:
+    event-string is "/nqol" #or "/nq"
+    set tab completions for position 1 to "help", "rl", "chat" and "version"
+    #set tab completions for position 1 to "help", "chat", "version", "setprefix" and "setnoperms"
+    #set tab completions for position 2 to all scripts
+
+command /nqol [<text>] [<text>]:
+    permission: nqol.*
+    permission message: %{nopermmsg}%
+    trigger:
+        arg-1 is "format" or "chat" or "chatformat" or "formatchat" or "c" or "cf":
+            arg-2 is set: 
+                arg-2 is not "reset":
+                    set {chatformat} to arg-2
+                    send " "
+                    send "&7Успешно изменен формат чата."
+                    set {_chat} to {chatformat}
+                    replace all "{player}" in {_chat} with "%player%"
+                    replace all "{message}" in {_chat} with "Это тестовое сообщение!"
+                    send colored "&7Current Format&8: &7%{_chat}%"
+                    send " "
+                    if arg-2 contains "{prefix}" or {suffix}:
+                        send "&b&lPREFIXES & SUFFIXES&8 ⋗ &7Prefixes/Суффиксы не будут работать без плагина для управления чатом! Мы рекомендуем использовать &bVault&7 и любой &bpermissions plugin&7 на ваш выбор!"
+                        send " "
+                else:
+                    delete {chatformat}
+                    send "{@nqprefix} &7Сбросьте формат чата!"
+            else:
+                send " "
+                send "&bНедопустимый синтаксис."
+                send "&bПеременные форматирования чата:"
+                send "&7Use {player} to get the player"
+                send "&7Use {message} to get the message"
+                send "&7Use {prefix} to get the player's prefix"
+                send "&7Use {suffix} to get the player's suffix"
+                send " "
+                send "&7Example&8: &7/nqol format &7{player} &8> &7{message}"
+                send " "
+        arg-1 is "setprefix" or "prefix" or "p":
+            arg-2 is set:
+                send " "
+                send "&7Префикс изменен для &bNQOL&7 to &r%colored arg-2%&7."
+                send "%colored arg-2% Это пример!"
+                send " "
+                set  {nqolprefix} to colored arg-2
+        arg-1 is "setnoperm" or "noperm" or "setnopermmsg" or "snp" or "np" or "permmsg":
+            arg-2 is set:
+                send " "
+                send "&7Изменено сообщение об отсутствии разрешения для &bNQOL&7 to &r%colored arg-2%&7."
+                send "&7Example&8: &7%colored arg-2%"
+                send " "
+                set {nopermmsg} to colored arg-2
+        arg-1 is "help":
+            send " "
+            send "&b&lNQOL &8- &7Все команды & синтаксис"
+            send " "
+            send "&b&lNQOL КОМАНДЫ НАСТРОЙКИ"
+            send "&8• &7/nqol help &8- &7Открывает эту страницу."
+            send "&8• &7/nqol chat &8- (&7Chat Format &8- &7""&8/&7nqol chat {prefix} {player}: {message}"""
+            send "&8• &7/nqol version &8- &7Отображает версию скрипта."
+            send "&8• &7/nqol setprefix &8(&7Text&8) &8- &7Sets общесерверный префикс, который все &bNQOL &7messages use."
+            send "&8• &7/nqol rl &8-&7 Перезагружает плагин, без сообщения об ошибках."
+            #send "&8• &7/nqol setnoperm &8(&7Text&8) &8- &7Задает сообщение, которое игрок получает, если у него нет разрешения на выполнение команды."
+            send " "
+            send "&b&lTIME"
+            send "&8• &7/day &8- &7Устанавливает время на day."
+            send "&8• &7/night &8- &7Устанавливает время на nigth."
+            send "&8• &7/noon &8- &7Устанавливает время на noon."
+            send "&8• &7/midnight &8- &7Устанавливает время на midnight."
+            send " "
+            send "&b&lUTILITIES"
+            send "&8• &7/killall &8<&7mob-type&8> &8- &7Убивает всех мобов или всего определенного моба, если задан первый аргумент."
+            send "&8• &7/heal &8<&7player&8> &8- &7Исцеляет игрока или вас самих, если первый аргумент оставлен пустым."
+            send "&8• &7/feed &8<&7player&8> &8- &7Подкармливает игрока или себя, если первый аргумент оставлен пустым."
+            send "&8• &7/gm1 &8<&7player&8> &8- &7Переключает твой режим&8/&7чужой в creative."
+            send "&8• &7/gm0 &8<&7player&8> &8- &7Переключает твой режим&8/&7чужой в survival."
+            send "&8• &7/gm2 &8<&7player&8> &8- &7Переключает твой режим&8/&7чужой в adventure."
+            send "&8• &7/gm3 &8<&7player&8> &8- &7Переключает твой режим&8/&7чужой в spectator."
+            send "&8• &7/fly &8<&7player> &8- &7Включает&8/&7отключает fly для игрока&8/&7для вас."
+            send "&8• &7/repair &8- &7Чинит предмет в руке."
+            send "&8• &7/tps &8- &7Отображает &btps&7 сервера в красивом сообщении."
+            send "&8• &7/ping &8<&7player&8>&8-&7 Проверяет &bPing &7Ваш&8\&7Игрока."
+            send "&8• &7/cc &8- &7Очищает чат &bСервера&7."
+            send "&8• &7/pcc &8- &7Очищает &bтолько твой чат&7."
+            send "&8• &7/stats &8<&7player&8> &8- &7Отправляет полезную статистику о игроке."
+            send " "
+            send "&b&lMISC"
+            #send "&8• &7/trap &8<&7player&8> &8- &7Закидывает игрока в ловушку."
+            #send "&8• &7/untrap &8<&7player&8> &8- &7Освобождает игрока из ловушки."
+            send "&8• &7/hat &8-&7 Устанавливает предмет, который вы держите в руке, в качестве вашей шляпы."
+            send "&8• &7/shrug &8-&7 Отправляет в чат &8-&7 ¯\_(ツ)_/¯"
+            send "&8• &7/uwu &8-&7 Отправляет в чат &8-&7 (づ｡◕‿‿◕｡)づ"
+            send "&8• &7/shy &8-&7 Отправляет в чат &8-&7 (^///^)"
+            send "&8• &7/mem&8/&7mems &8-&7 воспроизводит звук мемасика"
+            send "&8• &7/memstop &8<&7player&8> -&7 останавливает проигрования звука"
+            send "&8• &7/smite &8<&7player&8> &7Поражает игрока молнией."
+            #send "&8• &7/sudo &8<player> (text) &7Заставляет игрока произнести введенный текст/команду."
+            send "&8• &7/suicide &8- &7Убивает вас если вы где-то застряли (рекомендуется использовать /spawn)."
+            send " "
+            send "&b&lНЕКОМАНДНЫЕ ФУНКЦИИ"
+            send "&8• &7Custom join&8/&7quit messages &8- &7Они выглядят намного красивее, чем оригинал!"
+            #send "&8• &7Auto-AFK &8- &7Автоматически переводит ваших игроков в режим AFK после 5 минут бездействия"
+            send " "
+            send "&7Это еще не все! По мере обновления этого скрипта появятся новые функции!"
+            send " &2! &7Спасибо, за установку скрипта &b(^・ω・^)"
+            send " "
+        arg-1 is "version":
+            send " "
+            send "{@nqprefix} &7В данный момент вы используете версию &b&lNQOL: {@version}"
+            send "{@nqprefix} &7Последняя дата обновления скрипта: {@date}"
+            send " "
+        arg-1 is "rl":
+            reload skript "{@filename}"
+            wait 4 ticks
+            script "NQOL.sk" is loaded
+            send "{@nqprefix} &aСкрипт был успешно перезагружен!"
+            stop trigger
+        arg-1 is not set:
+            send " "
+            send "&b&lNQOL &8- &7Базовые команды"
+            send " "
+            send "&8• &7/nqol help &8- &7Просмотр списка всех команд и функций."
+            send "&8• &7/nqol version &8- &7Узнайте, версию &bNQOL &7которую вы используете."
+            #send "&8• &7/nqol setprefix &8<&7Prefix&8> &8- &7Задает префикс NQOL."
+            #send "&8• &7/nqol setnopermmsg &8<&7Text&8> &8- &7Изменяет/устанавливает сообщение об отсутствии прав."
+            send "&8• &7/nqol format &8<&7Chat Format&8> &8- &7Настройка формата чата."
+            send " "
+
+
+
+#command /sudo [<player>] [<text>]:
+	#permission: nqol.sudo
+	#permission message: %{nopermmsg}%
+	#trigger:
+		#arg-1 is not player:
+			#make arg-1 say arg-2
+		#else:
+			#send "{@nqprefix} &7You can't sudo that person!"
+
+# Stat Logging
+			
+on chat:
+	add 1 to {messagessent::%player's uuid%}
+	set {lastknownmessage::%player's uuid%} to colored message
+	
+on quit:
+	set {lastknowntime::%player's uuid%} to now
+
+on join:
+	set {lastknowntime::%player's uuid%} to now
+	
+on death:
+	add 1 to {kills::%attacker's uuid%}
+	add 1 to {deaths::%victim's uuid%}
+	
+on break:
+	add 1 to {blocksbroken::%player's uuid%}
+	
+# Stat Viewer
+			
+command /stats [<player>]:
+	permission: nqol.stats
+	permission message: %{nopermmsg}%
+	trigger:
+		if arg-1 is set:
+			send " "
+			send "&b&lСтатистика игрока &8- &b%player%&b'a"
+			send " "
+			if {messagessent::%arg-1's uuid%} is not set:
+				set {messagessent::%arg-1's uuid%} to 0
+			if {lastknowntime::%arg-1's uuid%} is not set:
+				set {lastknowntime::%arg-1's uuid%} to "&bN/A"
+			if {lastknownmessage::%arg-1's uuid%} is not set:
+				set {lastknownmessage::%arg-1's uuid%} to "&7N/A"
+			if {blocksbroken::%arg-1's uuid%} is not set:
+				set {blocksbroken::%arg-1's uuid%} to 0
+			if {kills::%arg-1's uuid%} is not set:
+				set {kills::%arg-1's uuid%} to 0
+			if {deaths::%arg-1's uuid%} is not set:
+				set {deaths::%arg-1's uuid%} to 0
+			send "&8• &7Блоков сломано&8: &b%{blocksbroken::%arg-1's uuid%}%"
+			send "&8• &7Убийств&8: &b%{kills::%arg-1's uuid%}%"
+			send "&8• &7Смертей&8: &b%{deaths::%arg-1's uuid%}%"
+			send "&8• &7Сообщений отправлено&8: &b%{messagessent::%arg-1's uuid%}% &bMessages"
+			send "&8• &7Последний раз когда его видели&8: &b%{lastknowntime::%arg-1's uuid%}%"
+			send "&8• &7Последнее отправленное сообщение&8: &8""&2%{lastknownmessage::%arg-1's uuid%}%&8""&7"
+			send "&8• &7Время игры&8: &b%{playtime::%arg-1's uuid%}%"
+		else:
+			send "{@nqprefix} &7Неправелный синтаксис."
+		
+# Playtime
+
+every second:
+	loop all players:
+		if {s::%loop-player's uuid%} is not set:
+			set {s::%loop-player's uuid%} to 0
+		if {m::%loop-player's uuid%} is not set:
+			set {m::%loop-player's uuid%} to 0
+		if {h::%loop-player's uuid%} is not set:
+			set {h::%loop-player's uuid%} to 0
+		if {d::%loop-player's uuid%} is not set:
+			set {d::%loop-player's uuid%} to 0
+		add 1 to {s::%loop-player's uuid%}
+		if {s::%loop-player's uuid%} is 60:
+			set {s::%loop-player's uuid%} to 0
+			add 1 to {m::%loop-player's uuid%}
+		if {m::%loop-player's uuid%} is 60:
+			set {m::%loop-player's uuid%} to 0
+			add 1 to {h::%loop-player's uuid%}
+		if {h::%loop-player's uuid%} is 60:
+			set {h::%loop-player's uuid%} to 0
+			add 1 to {d::%loop-player's uuid%}
+		set {playtime::%loop-player's uuid%} to "&b%{d::%loop-player's uuid%}%&bd %{h::%loop-player's uuid%}%&bh %{m::%loop-player's uuid%}%&bmin &7и &b%{s::%loop-player's uuid%}%&bsec."
+		
+#command /playtime [<player>]:
+	#permission: nqol.playtime
+	#permission message: %{nopermmsg}%
+	#trigger:
+		#arg-1 is not set:
+			#send " "
+			#send "&b&lИгровое время &8- &7ты играл:"
+			#send "&b%{playtime::%player's uuid%}%"
+			#send " "
+			#stop
+		#else:
+			#player has permission "nqol.othersplaytime":
+				#send " "
+				#send "&b&lPLAYTIME &8- &7%arg-1%&7's Playtime"
+				#send "&b%{playtime::%arg-1's uuid%}%"
+				#send " "
+				#stop
+			#else:
+				#send "%{nopermmsg}%"
+				#stop
+
+# Visual Effects
+on click:
+	show wolf hearts on the clicked wolf
+	#play mob spawner flames at the targeted block to the player
+# VEfx
+# Experements 2.7.0.sk
+#on player level progress change:
+#		set {_xp} to event-experience
+#		send "%{_xp}%"
+
+command /slimey:
+	trigger:
+		if chunk at player is a slime chunk:
+			send "Это он!"
+		else:
+			send "Тут нет слаймов"
+
+#on loot generate:
+		#hance of 10%
+		#add 64 diamonds
+		#send "You hit the jackpot!"
+
+
+command /ping [<player>]:
+	trigger:
+		if arg 1 is not set:
+			send "{@nqprefix} &7Твой пинг &8→ &7%player's ping% ms"
+			stop trigger
+		if arg 1 is set:
+			send "{@nqprefix} Пинг %arg-1%'s &8→ &7%arg-1's ping% ms"
+			stop trigger
+
+#command /ping [<player=%player%>]:
+		#trigger:
+		#arg-1 is set:
+		#send " ! Понг %arg-1%'s ping is %arg-1's ping%"
+
+command /repair:
+    permission: nqol.repair
+    permission message: %{nopermmsg}%
+    trigger:
+        player's held item is not air:
+            repair player's held item
+            send "{@nqprefix} &7Отремонтировано %player's held item%"
+        else:
+            send "{@nqprefix} &7Вы должны держать инструмент в руке!"
+
+command /smite [<string>]:
+	permission: nqol.smite
+	permission message: %{nopermmsg}%
+	trigger:
+		arg-1 is not "*":
+			arg-1 parsed as a player is a player:
+				strike lightning effect at arg-1 parsed as a player
+				send "{@nqprefix} &7Тебя поразил &b%player%&7!" to arg-1 parsed as a player
+				stop
+		arg-1 is "*":
+			loop all players:
+				strike lightning effect at loop-player
+				send "{@nqprefix} &7Тебя поразил &b%player%&7!" to loop-player
+			stop
+		send "{@nqprefix} &7Invalid syntax."
+
+#command /kill [<text>]:
+	#cooldown: 10 minutes
+	#cooldown message: жди ещё %time%
+	#permission: nqol.kill
+	#permission message: %{nopermmsg}%
+	#trigger:
+		#if arg-1 is "@r":
+			#send " &a! &cКоманда отключена!"
+			#stop
+		#else:
+			#execute command "/kill %arg 1%"
+
+
+command /killall [<text>]:
+	permission: nqol.killall
+	permission message: %{nopermmsg}%
+	trigger:
+		send " &a! &cКоманда отключена!"
+		#arg-1 is not set:
+			#loop all entities:
+				#loop-entity is not a player:
+					#kill loop-entity
+					#add 1 to {_entitieskilled}
+			#send " "
+			#send "{@nqprefix} &7Killed &b%{_entitieskilled}% &7entities."
+			#send " "
+		#else:
+			#execute command "/kill @e[type=%arg-1%]"
+				
+#command /trap [<player>]:
+	#permission: nqol.trap
+	#permission message: %{nopermmsg}%
+	#trigger:
+		#arg-1 is set:
+			#set block under arg-1 to bedrock
+			#set block north of arg-1 to bedrock
+			#set block south of arg-1 to bedrock
+			#set block west of arg-1 to bedrock
+			#set block east of arg-1 to bedrock
+			#set block above block above arg-1 to bedrock
+			#send "{@nqprefix} &7Looks like you're in quite the pickle.." to arg-1
+			#send "{@nqprefix} &7Successfully trapped &b%arg-1%&7." to player
+			
+#command /untrap [<player>]:
+	#permission: nqol.untrap
+	#permission message: %{nopermmsg}%
+	#trigger:
+		#arg-1 is set:
+			#if block under arg-1 is bedrock:
+				#set block under arg-1 to air
+			#if block north of arg-1 is bedrock:
+				#set block north of arg-1 to air
+			#if block south of arg-1 is bedrock:
+				#set block south of arg-1 to air
+			#if block west of arg-1 is bedrock:
+				#set block west of arg-1 to air
+			#if block east of arg-1 is bedrock:
+				#set block east of arg-1 to air
+			#if block above block above arg-1 is bedrock:
+				#set block above block above arg-1 to air
+			#send "{@nqprefix} &7Беги.. ты теперь свободен!" to arg-1
+			#send "{@nqprefix} &7Успешно оттраплен &b%arg-1%&7." to player
+
+command /fly [<player>]:
+	permission: nqol.fly
+	permission message: %{nopermmsg}%
+	trigger:
+		arg-1 is set:
+			player has permission "nqol.fly.other":
+				arg-1 cannot fly:
+					make arg-1 fly
+					send "{@nqprefix} &7Режим полета был включен пользователем &b%player%&7. Теперь &aты можешь летать!" to arg-1
+					send "{@nqprefix} &b%arg-1% &7теперь может летать." to player
+				else:
+					make arg-1 stop flying
+					send "{@nqprefix} &7Режим полета был отключен &b%player%&7." to arg-1
+					send "{@nqprefix} &b%arg-1% &7полёт был &cвыключен." to player
+		else:
+			player cannot fly:
+				make player fly
+				send "{@nqprefix} &7Полёт &aразрешен." to player
+			else:
+				make player stop flying
+				send "{@nqprefix} &7Полёт &cзапрещён." to player
+	
+on join:
+	{nickname::%player's uuid%} is set:
+		set player's display name to {nickname::%player's uuid%}
+		
+#command /heal [<player>]:
+	#permission: nqol.heal
+	#permission message: %{nopermmsg}%
+	#trigger:
+		#arg-1 is not set:
+			#heal player
+			#send "{@nqprefix} &7Ты был исцелен."
+			#play sound "entity.witch.drink" to player
+		#else:
+			#heal arg-1
+			#send "{@nqprefix} &7Ты был исцелен." to arg-1
+			#play sound "entity.witch.drink" to arg-1
+
+command /heal:
+  description: Хилинг
+  usage: &e/heal
+  permission: nqol.heal
+  permission message: %{nopermmsg}%!
+  executable by: players
+  aliases: /heals, /feels
+  trigger:
+    set {heal} to difference between {heal.%player%} and now
+    if {heal} is less than 15 seconds:
+      send "{@nqprefix} &7Ты должен подождать ещё %difference between {heal} and 15 seconds% прежде чем хилиться!"
+      stop
+    set {heal.%player%} to now
+    if player's health is 10:
+      send "{@nqprefix} &7Твоё здоровье полное куда больше?!"
+    else:
+      heal player
+      set food level of player to 20
+      send "{@nqprefix} &7Ты был исцелён!"
+      execute console command "effect %player% clear"
+      stop
+			
+command /feed [<player>]:
+	permission: nqol.feed
+	permission message: %{nopermmsg}%
+	trigger:
+		arg-1 is not set:
+			feed player
+			send "{@nqprefix} &7Ты откормлен."
+			play sound "entity.generic.eat" to player
+		else:
+			feed arg-1
+			send "{@nqprefix} &7Тебя накормили." to arg-1
+			play sound "entity.generic.eat" to arg-1
+			
+command /day:
+	permission: nqol.day
+	permission message: %{nopermmsg}%
+	trigger:
+		set the time to 6:00
+		send "{@nqprefix} &7Установлено на день успешно!"
+		play sound "entity.chicken.egg" to player
+		
+command /night:
+	permission: nqol.night
+	permission message: %{nopermmsg}%
+	trigger:
+		set the time to 20:00
+		send "{@nqprefix} &7Установлено на ночь успешно!" 
+		play sound "entity.chicken.egg" to player
+		
+command /midnight:
+	permission: nqol.midnight
+	permission message: %{nopermmsg}%
+	trigger:
+		set the time to 0:00
+		send "{@nqprefix} &7Установлено на midnight успешно!"
+		play sound "entity.chicken.egg" to player
+		
+command /noon:
+	permission: nqol.noon
+	permission message: %{nopermmsg}%
+	trigger:
+		set the time to 12:00
+		send "{@nqprefix} &7Установлено на noon успешно!"	
+		play sound "entity.chicken.egg" to player
+		
+command /cc:
+	permission: nqol.chatclear
+	permission message: %{nopermmsg}%
+	trigger:
+		loop 98 times:
+			broadcast " "
+		broadcast "{@nqprefix} &7Чат был очищен им → &b%player%&7!"
+		broadcast " "
+	
+command /pcc:
+	trigger:
+		loop 98 times:
+			send " "
+		send "{@nqprefix} &7Ты отчистил свой чат."
+		send " "
+			 
+command /tps:
+	permission: nqol.tps
+	permission message: %{nopermmsg}%
+	trigger:
+		send " "
+		send "{@nqprefix} &bTPS&8: &7%tps%"
+		send " "
+		
+command /suicide:
+	permission: nqol.suicide
+	permission message: %{nopermmsg}%
+	trigger:
+		kill player
+		broadcast "{@nqprefix} &7Это был суровый мир для &b%player%&7."
+
+command /gm1 [<player>]:
+	permission: nqol.gamemode.creative
+	permission message: %{nopermmsg}%
+	trigger:
+		arg-1 is not set:
+			player's gamemode is not creative:
+				set player's gamemode to creative
+				send "{@nqprefix} &7Ты переключился на &bcreative&7."
+			else:
+				send "{@nqprefix} &7Твой режим уже находится в &bcreative&7."
+		else:
+			arg-1's gamemode is not creative:
+				set arg-1's gamemode to creative
+				send "{@nqprefix} &7Set your gamemode to &bcreative&7." to arg-1
+				send "{@nqprefix} &b%arg-1%&b's &7gamemode has been set to &bcreative&7."
+			else:
+				send "{@nqprefix} &b%arg-1%&b's&7 gamemode is already set to &bcreative&7." to player
+
+command /gm0 [<player>]:
+	permission: nqol.gamemode.survival
+	permission message: %{nopermmsg}%
+	trigger:
+		arg-1 is not set:
+			player's gamemode is not survival:
+				set player's gamemode to survival
+				send "{@nqprefix} &7Set your gamemode to &bsurvival&7."
+			else:
+				send "{@nqprefix} &7Your gamemode is already set to &bsurvival&7."
+		else:
+			arg-1's gamemode is not survival:
+				set arg-1's gamemode to survival
+				send "{@nqprefix} &7Set your gamemode to &bsurvival&7." to arg-1
+				send "{@nqprefix} &b%arg-1%&b's &7gamemode has been set to &bsurvival&7."
+			else:
+				send "{@nqprefix} &b%arg-1%&b's&7 gamemode is already set to &bsurvival&7." to player
+
+command /gm2 [<player>]:
+	permission: nqol.gamemode.adventure
+	permission message: %{nopermmsg}%
+	trigger:
+		arg-1 is not set:
+			player's gamemode is not adventure:
+				set player's gamemode to adventure
+				send "{@nqprefix} &7Set your gamemode to &badventure&7."
+			else:
+				send "{@nqprefix} &7Your gamemode is already set to &badventure&7."
+		else:
+			arg-1's gamemode is not adventure:
+				set arg-1's gamemode to adventure
+				send "{@nqprefix} &7Set your gamemode to &badventure&7." to arg-1
+				send "{@nqprefix} &b%arg-1%&b's &7gamemode has been set to &badventure&7."
+			else:
+				send "{@nqprefix} &b%arg-1%&b's&7 gamemode is already set to &badventure&7." to player
+
+command /gm3 [<player>]:
+	permission: nqol.gamemode.spectator
+	permission message: %{nopermmsg}%
+	trigger:
+		arg-1 is not set:
+			player's gamemode is not spectator:
+				set player's gamemode to spectator
+				send "{@nqprefix} &7Set your gamemode to &bspectator&7."
+			else:
+				send "{@nqprefix} &7Your gamemode is already set to &bspectator&7."
+		else:
+			arg-1's gamemode is not spectator:
+				set arg-1's gamemode to spectator
+				send "{@nqprefix} &7Set your gamemode to &bspectator&7." to arg-1
+				send "{@nqprefix} &b%arg-1%&b's &7gamemode has been set to &bspectator&7."
+			else:
+				send "{@nqprefix} &b%arg-1%&b's&7 gamemode is already set to &bspectator&7." to player
+				
+#command /togglepingsound:
+#    cooldown: 3 seconds
+#    cooldown message: &cWait youre under cooldown! &8(&c%remaining%&8)
+#    trigger:
+#        if {pingsound::%player's uuid%} is not set:
+#			set {pingsound::%player's uuid%} to true
+#			send "&aТы Включил Ping Sound!"
+#		else if {pingsound::%player's uuid%} is true:
+#			delete {pingsound::%player's uuid%}
+#			send "&cТы Выключил Ping Sound."
+
+
+
+# Ping System	
+on chat:
+    loop all players:
+        if message contains "%loop-player%":
+            replace "%loop-player%" with "&e@%loop-player%&f" in message
+            #if {pingsound::%loop-player's uuid%} is true:
+            play sound "ui_cartography_table_take_result" with volume 50 and pitch 1 to loop-player
+# Chat Formatting
+on chat:
+	if {chatformat} is set:
+		set {_chat} to {chatformat}
+		replace all "{player}" in {_chat} with player's displayname
+		replace all "{message}" in {_chat} with message
+		replace all "{prefix}" in {_chat} with player's prefix
+		#replace all "{suffix}" in {_chat} with player's suffix
+		set the chat format to formatted {_chat}
+#	else:
+#		set the chat format to "%player's prefix%&r%player's display name%&r%player's suffix%&r: %colored message%"
+# Chat Commands
+command /shrug:
+    permission: nqol.chat.shrug
+    trigger:
+        broadcast "&2%player% &7→ &f¯\_(ツ)_/¯"
+
+command /svurg:
+    permission: nqol.chat.svurg
+    trigger:
+        broadcast "&2%player% &7→ &f(づ｡◕‿‿◕｡)づ"
+
+command /shy:
+    permission: nqol.chat.shy
+    trigger:
+        broadcast "&2%player% &7→ &f(^///^)"
+
+#command /CDCMD:
+    #cooldown: 10 seconds
+    #trigger:
+        #if cooldown of player for mycommand is 0:
+            # Выполнить действия команды здесь
+            #send "Команда выполнена!"
+            #set cooldown of player for mycommand to 10 seconds
+        #else:
+            #send "Подождите еще %cooldown of player for mycommand% секунд, прежде чем использовать эту команду снова."
+
+command /link:
+    permission: nqol.chat.link
+    trigger:
+        send " &a! &cКоманда в разработке."
+        #broadcast "<link:https://m-pointpixel.dynmap.xyz/>&cТык что бы посмотреть карту!<reset>"
+        #broadcast "<tooltip:&5Это сообщение!>Прикинь!<reset>"
+        #broadcast "<command:/spawn>Тык что бы сразу /spawn<reset>"
+        #broadcast "<ins:/spawn>Тык что бы изучить команду/spawn<reset>"
+
+on player trade:
+		play sound "custom.gui.ui_buy_button" for player
+
+command /nqhelp:
+	trigger:
+		send "&b&lHelp"
+		send "&8• &7/m &8<&7игрок&8> &8-&7 сообщение игроку."
+		send "&8• &7/re &8-&7 ответ игроку."
+		send "&8• &7/mem &8<&7name&8> &8-&7 воспроизводит звук в радиусе 6 блоков."
+		send "&8• &7/pcc &8-&7 Отчиска собственного чата."
+		send "&8• &7/memstop &8-&7 остановка звуков."
+		send "&8• &7/stats &8<&7игрок&8> &8-&7 Статистика игрока."
+		send "&8• &7/hat &8-&7 Устанавливает шляпку на голову в руках."
+		send "&8• &7/shrug &8-&7 Отпровляет в чат: ¯\_(ツ)_/¯"
+		send "&8• &7/svurg &8-&7 Отпровляет в чат: (づ｡◕‿‿◕｡)づ"
+		send "&8• &7/shy &8-&7 Отпровляет в чат: (^///^)"
+		send "&8• &7/pinfo &8-&7 полезные сылочки на наши доступные ресурсы."
+		send "&8• &7/map hide &8-&7 Скрывает вас с карты."
+		send "&8• &7/map show &8-&7 Показывает вас на карте."
+		send "&8• &7/map webregister &8-&7 Регистрация на карте."
+
+command /pinfo:
+	trigger:
+		send "На &e&l!&f Можно нажать используя Shift и LKM по тексту."
+		send ""
+		send "<tooltip:&cНаш основной сайт!.><link:https://pointpixel.ru> &4! &eНажми&f что-бы перейти на основной &4Сайт!!<r>"
+		send "<tooltip:&9Сылочка на наш Discord.><link:https://discord.gg/VjtjduYsgX> &4! &eНажми&f что-бы перейти в &4Discord!<r>"
+		send "<tooltip:&eСылочка на нашу интерактивную карту!><link:http://map.pointpixel.ru:25575> &a! &eНажми&f что-бы посмотреть Карты!<r>"
+		send "<tooltip:&eСылочка на карту сервера с выживанием!><link:http://smap.pointpixel.ru:25667> &a! &eНажми&f что-бы посмотреть Карты!<r>"
+		send "<tooltip:&6Сылочка на наш Магазин.><link:https://shop.pointpixel.ru/> &a! &eНажми&f что-бы перейти в магазин!<r>"
+		send "<tooltip:&3Привязка Dsicord к Minecraft.><ins:/adddiscord> &e&l! &eНажми&f что бы начать процесс привязки!<r>"
+		send "<tooltip:Помощь по командам><ins:/nqhelp> &e&l! &fКоманда помощи.<r>"
+		send " "
+
+command /memstop [<player>]:
+  permission: nqol.chat.memstop
+  trigger:
+    set {_player} to arg-1
+    if {_player} is not set:
+      set {_player} to player
+    execute console command "stopsound %{_player}% master"
+    send "{@nqprefix} &aМузыка остановлена для %{_player}%."
+
+command /nqclear:
+	permission: nqol.clear.item
+	trigger:
+		execute player command "/kill @e[type=minecraft:item]"
+		send "{@nqprefix} Успех!"
+
+on tab complete:
+    event-string is "/mem" or "/mems"
+    set tab completions for position 1 to "M-HeyLove","M-ColdFreshAir", "Криндж", "Duel", "Лягушка", "Love", "Ябрутал", "Гыгы", "Ящики!", "ПортХаб" and "Quark"
+    #set tab completions for position 2 to all scripts
+
+# on chat links
+#if the argument starts with "test" or "debug":
+    #send "Stop!"
+
+#on chat:
+    #if message partially matches "\d":
+        #send "Message contains a digit!"
+    #if message doesn't match "[A-Za-z]+":
+        #send "Message doesn't only contain letters!"
+
+on tab complete:
+    event-string is "/map"
+    set tab completions for position 1 to "show","hide" and "webregister"
+command /map [<text>]:
+		permission: nqol.dymap
+		permission message: %{nopermmsg}%
+		trigger:
+				arg-1 is "show":
+						execute player command "/dynmap show"
+				arg-1 is "hide":
+						execute player command "/dynmap hide"
+				arg-1 is "webregister":
+						execute player command "/dynmap webregister"
+				arg-1 is not set:
+						send "{@nqprefix} &7Неправелный синтаксис."
+
+
+command /mem [<text>]:
+  permission: nqol.chat.mem
+  aliases: /mems
+	#cooldown: 10 seconds
+  trigger:
+    #send " &a! &cКоманда в разработке"
+    if arg-1 is "M-HeyLove":
+      play sound "custom.music.hey_love_larry_poppinz" for all players within 6 blocks of player
+    else if arg-1 is "Криндж":
+      play sound "item.goat_horn.sound.6" for all players within 6 blocks of player
+    else if arg-1 is "Duel":
+      play sound "custom.sfx.duel" for all players within 6 blocks of player
+    else if arg-1 is "Лягушка":
+      play sound "custom.sfx.afrog" for all players within 6 blocks of player
+    else if arg-1 is "Love":
+      play sound "custom.sfx.day_in_paris" for all players within 6 blocks of player
+    else if arg-1 is "Ябрутал":
+      play sound "custom.sfx.iambuteful" for all players within 6 blocks of player
+    else if arg-1 is "Гыгы":
+      play sound "custom.sfx.pigout" for all players within 6 blocks of player
+    else if arg-1 is "ПортХаб":
+      play sound "custom.sfx.porhub" for all players within 6 blocks of player
+    else if arg-1 is "Quark":
+      play sound "custom.sfx.quark" for all players within 6 blocks of player
+    else if arg-1 is "M-ColdFreshAir":
+      play sound "custom.music.higher_sense-cold_fresh_air" for all players within 6 blocks of player
+    else if arg-1 is "Ящики!":
+      play sound "custom.sfx.boxes" for all players within 6 blocks of player
+    else:
+      send "{@nqprefix} &7Неправелный синтаксис."
+    #play sound "custom.gui.ui_buy_button" at location of player (Только для игрока)
